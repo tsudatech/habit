@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface HabitRepository : CrudRepository<Habit, Long> {
     fun findAllByOrderByHabitId(): Iterable<Habit>
+    fun findByHabitNameContains(habitName: String?): Iterable<Habit>
 }
