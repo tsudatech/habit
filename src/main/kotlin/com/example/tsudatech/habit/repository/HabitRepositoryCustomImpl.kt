@@ -11,6 +11,16 @@ class HabitRepositoryCustomImpl @Autowired constructor(
         private val entityManager: EntityManager) : HabitRepositoryCustom {
 
     override fun findHabitsWithSearchCondition(searchCondition: SearchHabitModel) : Iterable<Habit>{
-        return entityManager.createQuery("SELECT h FROM Habit h WHERE h.habitId = 1", Habit::class.java).resultList
+        val sql = "SELECT h FROM Habit h " + this.createSearchCondition(searchCondition)
+        return entityManager.createQuery(sql, Habit::class.java).resultList
+    }
+
+    private fun createSearchCondition(searchCondition: SearchHabitModel) : String {
+        var condition : String = ""
+        if (searchCondition.habitId != null) condition += "WHERE habitId = " + searchCondition.habitId
+        if (searchCondition.habitName != null) condition += " AND habitName = '" + searchCondition.habitName + "'"
+        if (searchCondition.createDate != null) condition += " AND createDate = " + searchCondition.createDate + "'"
+        if (searchCondition.updateDate != null) condition += " AND updateDate = " + searchCondition.updateDate + "'"
+        return condition
     }
 }

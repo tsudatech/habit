@@ -7,6 +7,7 @@ import com.example.tsudatech.habit.repository.HabitRepositoryCustomImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 // https://spring.io/guides/tutorials/rest/
 @RestController
@@ -17,15 +18,15 @@ class HabitController @Autowired constructor(
   // curl localhost:8080/habit/
   @GetMapping("/habit")
   fun all(): ResponseEntity<Iterable<Habit?>> {
-//    val habits = habitRepository.findAllByOrderByHabitId()
-    val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(SearchHabitModel())
+    val habits = habitRepository.findAllByOrderByHabitId()
     return ResponseEntity.ok(habits)
   }
 
   // curl -X POST localhost:8080/habit/search -H "Content-type:application/json" -d "{\"habitName\": \"Hello New World\"}"
   @PostMapping("/habit/search")
   fun search(@RequestBody searchModel: SearchHabitModel): ResponseEntity<Iterable<Habit>> {
-    return ResponseEntity.ok(habitRepository.findByHabitNameContains(searchModel.habitName))
+    val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(SearchHabitModel())
+    return ResponseEntity.ok(habits)
   }
 
   // curl -X POST localhost:8080/habit/ -H "Content-type:application/json" -d "{\"habitName\": \"Hello New World\"}"
@@ -39,6 +40,7 @@ class HabitController @Autowired constructor(
   fun replaceHabit(@RequestBody newHabit: Habit, @PathVariable id: Long): ResponseEntity<Habit> {
     return ResponseEntity.ok(habitRepository.findById(id).map{ habit ->
       habit.habitName = newHabit.habitName
+      habit.updateDateTime = LocalDateTime.now()
       habitRepository.save(habit)
     }.orElseGet { ->
       habitRepository.save(Habit(newHabit.habitName))
