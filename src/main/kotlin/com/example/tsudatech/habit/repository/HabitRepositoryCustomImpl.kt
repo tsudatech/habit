@@ -25,13 +25,13 @@ class HabitRepositoryCustomImpl @Autowired constructor(
             conditionList.add("habitId = " + searchCondition.habitId.toString())
         }
         if (searchCondition.habitName != null) {
-            conditionList.add("habitName = '" + searchCondition.habitName + "'")
+            conditionList.add("habitName like '%" + searchCondition.habitName + "%'")
         }
         if (searchCondition.createDate != null) {
-            conditionList.add("createDateTime = '" + searchCondition.createDate + "'")
+            conditionList.add("DATE_FORMAT(createDateTime, '%Y%m%d') = '" + searchCondition.createDate + "'")
         }
         if (searchCondition.updateDate != null) {
-            conditionList.add("updateDateTime = '" + searchCondition.updateDate + "'")
+            conditionList.add("DATE_FORMAT(updateDateTime, '%Y%m%d') = '" + searchCondition.updateDate + "'")
         }
         return convertConditionListToWhereClause(conditionList)
     }
