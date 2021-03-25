@@ -9,4 +9,14 @@ data class SearchHabitModel(
         , val createDate : String? = null
         , val updateDate : String? = null
 ) {
+
+    public fun isAllAttributesNull() : Boolean {
+        for (field in this.javaClass.declaredFields) {
+            if (field[this] != null) {
+                return false
+            }
+        }
+        return true;
+    }
+
 }

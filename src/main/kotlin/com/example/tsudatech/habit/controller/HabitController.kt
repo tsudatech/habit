@@ -25,7 +25,7 @@ class HabitController @Autowired constructor(
   // curl -X POST localhost:8080/habit/search -H "Content-type:application/json" -d "{\"habitName\": \"Hello New World\"}"
   @PostMapping("/habit/search")
   fun search(@RequestBody searchModel: SearchHabitModel): ResponseEntity<Iterable<Habit>> {
-    val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(SearchHabitModel())
+    val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(searchModel)
     return ResponseEntity.ok(habits)
   }
 

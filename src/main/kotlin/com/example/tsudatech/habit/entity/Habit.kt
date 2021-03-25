@@ -10,8 +10,8 @@ import javax.persistence.Id
 @Entity
 class Habit (
     var habitName: String? = null,
-    var createDateTime: LocalDateTime? = null,
-    var updateDateTime: LocalDateTime? = null,
+    var createDateTime: LocalDateTime? = LocalDateTime.now(),
+    var updateDateTime: LocalDateTime? = LocalDateTime.now(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var habitId: Long? = null)

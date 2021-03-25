@@ -4,6 +4,7 @@ import com.example.tsudatech.habit.entity.Habit
 import com.example.tsudatech.habit.model.SearchHabitModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
+import java.lang.StringBuilder
 import javax.persistence.EntityManager
 
 @Repository
@@ -16,11 +17,34 @@ class HabitRepositoryCustomImpl @Autowired constructor(
     }
 
     private fun createSearchCondition(searchCondition: SearchHabitModel) : String {
-        var condition : String = ""
-        if (searchCondition.habitId != null) condition += "WHERE habitId = " + searchCondition.habitId
-        if (searchCondition.habitName != null) condition += " AND habitName = '" + searchCondition.habitName + "'"
-        if (searchCondition.createDate != null) condition += " AND createDate = " + searchCondition.createDate + "'"
-        if (searchCondition.updateDate != null) condition += " AND updateDate = " + searchCondition.updateDate + "'"
-        return condition
+        if (searchCondition.isAllAttributesNull()) {
+            return ""
+        }
+        var conditionList : ArrayList<String> = ArrayList<String>()
+        if (searchCondition.habitId != null) {
+            conditionList.add("habitId = " + searchCondition.habitId.toString())
+        }
+        if (searchCondition.habitName != null) {
+            conditionList.add("habitName = '" + searchCondition.habitName + "'")
+        }
+        if (searchCondition.createDate != null) {
+            conditionList.add("createDateTime = '" + searchCondition.createDate + "'")
+        }
+        if (searchCondition.updateDate != null) {
+            conditionList.add("updateDateTime = '" + searchCondition.updateDate + "'")
+        }
+        return convertConditionListToWhereClause(conditionList)
+    }
+
+    private fun convertConditionListToWhereClause(conditionList : ArrayList<String>) : String {
+        var builder : StringBuilder = StringBuilder()
+        if (conditionList.isEmpty()) return ""
+        builder.append("WHERE ")
+        builder.append(conditionList[0])
+        for (i in 1 until conditionList.size) {
+            builder.append(" AND ")
+            builder.append(conditionList[i])
+        }
+        return builder.toString()
     }
 }
