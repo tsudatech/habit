@@ -6,8 +6,10 @@ import java.util.*
 data class SearchHabitModel(
         val habitId : Long? = null
         , val habitName : String? = null
-        , val createDate : String? = null
-        , val updateDate : String? = null
+        , val createDateFrom : String? = null
+        , val createDateTo : String? = null
+        , val updateDateFrom : String? = null
+        , val updateDateTo : String? = null
 ) {
 
     public fun isAllAttributesNull() : Boolean {

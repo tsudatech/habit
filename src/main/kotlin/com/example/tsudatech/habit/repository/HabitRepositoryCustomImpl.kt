@@ -1,10 +1,15 @@
 package com.example.tsudatech.habit.repository
 
+import com.example.tsudatech.habit.common.DateTimeUtility
 import com.example.tsudatech.habit.entity.Habit
 import com.example.tsudatech.habit.model.SearchHabitModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.lang.StringBuilder
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.persistence.EntityManager
 
 @Repository
@@ -27,11 +32,13 @@ class HabitRepositoryCustomImpl @Autowired constructor(
         if (searchCondition.habitName != null) {
             conditionList.add("habitName like '%" + searchCondition.habitName + "%'")
         }
-        if (searchCondition.createDate != null) {
-            conditionList.add("DATE_FORMAT(createDateTime, '%Y%m%d') = '" + searchCondition.createDate + "'")
+        if (searchCondition.createDateTo != null && searchCondition.createDateFrom != null) {
+            conditionList.add("createDateTime between '" + DateTimeUtility.fromYYYYMMDD(searchCondition.createDateFrom)
+                    + "' AND '" + DateTimeUtility.fromYYYYMMDDWithMaxTime(searchCondition.createDateTo) + "'")
         }
-        if (searchCondition.updateDate != null) {
-            conditionList.add("DATE_FORMAT(updateDateTime, '%Y%m%d') = '" + searchCondition.updateDate + "'")
+        if (searchCondition.updateDateTo != null && searchCondition.updateDateFrom != null) {
+            conditionList.add("updateDateTime between '" + DateTimeUtility.fromYYYYMMDD(searchCondition.updateDateFrom)
+                    + "' AND '" + DateTimeUtility.fromYYYYMMDDWithMaxTime(searchCondition.updateDateTo) + "'")
         }
         return convertConditionListToWhereClause(conditionList)
     }
