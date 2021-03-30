@@ -6,10 +6,6 @@ import com.example.tsudatech.habit.model.SearchHabitModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import java.lang.StringBuilder
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.persistence.EntityManager
 
 @Repository

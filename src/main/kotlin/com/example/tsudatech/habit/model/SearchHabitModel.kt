@@ -1,15 +1,15 @@
 package com.example.tsudatech.habit.model
 
-import java.time.LocalDate
-import java.util.*
+import javax.validation.constraints.Pattern
 
 data class SearchHabitModel(
-        val habitId : Long? = null
-        , val habitName : String? = null
-        , val createDateFrom : String? = null
-        , val createDateTo : String? = null
-        , val updateDateFrom : String? = null
-        , val updateDateTo : String? = null
+        val habitId : Long?,
+        val habitName : String,
+        @field:Pattern(regexp="[0-9]{8}", message = "createDateFromは8文字で指定してください")
+        val createDateFrom : String?,
+        val createDateTo : String?,
+        val updateDateFrom : String?,
+        val updateDateTo : String?
 ) {
 
     public fun isAllAttributesNull() : Boolean {
@@ -20,5 +20,12 @@ data class SearchHabitModel(
         }
         return true;
     }
+
+//    @AssertTrue(message = "updateがcreateより過去")
+//    fun isLater(): Boolean {
+////        if(create == null || update == null) return true
+////        return create.before(update) || create == update
+//        return true
+//    }
 
 }

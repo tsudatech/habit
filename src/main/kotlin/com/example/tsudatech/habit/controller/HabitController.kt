@@ -6,6 +6,8 @@ import com.example.tsudatech.habit.repository.HabitRepository
 import com.example.tsudatech.habit.repository.HabitRepositoryCustomImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -24,7 +26,11 @@ class HabitController @Autowired constructor(
 
   // curl -X POST localhost:8080/habit/search -H "Content-type:application/json" -d "{\"habitName\": \"Hello New World\"}"
   @PostMapping("/habit/search")
-  fun search(@RequestBody searchModel: SearchHabitModel): ResponseEntity<Iterable<Habit>> {
+  fun search(@RequestBody @Validated searchModel: SearchHabitModel,
+             bindingResult: BindingResult): ResponseEntity<Any> {
+    if(bindingResult.hasErrors()){
+      return ResponseEntity.ok(bindingResult.allErrors.toList())
+    }
     val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(searchModel)
     return ResponseEntity.ok(habits)
   }
