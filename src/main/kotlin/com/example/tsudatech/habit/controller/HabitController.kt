@@ -5,6 +5,7 @@ import com.example.tsudatech.habit.model.SearchHabitModel
 import com.example.tsudatech.habit.repository.HabitRepository
 import com.example.tsudatech.habit.repository.HabitRepositoryCustomImpl
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
@@ -29,7 +30,7 @@ class HabitController @Autowired constructor(
   fun search(@RequestBody @Validated searchModel: SearchHabitModel,
              bindingResult: BindingResult): ResponseEntity<Any> {
     if(bindingResult.hasErrors()){
-      return ResponseEntity.ok(bindingResult.allErrors.toList())
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.allErrors.toList())
     }
     val habits = habitRepositoryCustomImpl.findHabitsWithSearchCondition(searchModel)
     return ResponseEntity.ok(habits)

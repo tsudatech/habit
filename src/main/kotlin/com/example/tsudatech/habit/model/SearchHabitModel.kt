@@ -1,16 +1,19 @@
 package com.example.tsudatech.habit.model
 
-import javax.validation.constraints.Pattern
+import com.example.tsudatech.habit.common.DateTimeUtility
+import java.time.LocalDateTime
+import javax.validation.constraints.AssertTrue
 
 data class SearchHabitModel(
         val habitId : Long?,
         val habitName : String,
-        @field:Pattern(regexp="[0-9]{8}", message = "createDateFromは8文字で指定してください")
         val createDateFrom : String?,
         val createDateTo : String?,
         val updateDateFrom : String?,
         val updateDateTo : String?
 ) {
+
+    val regex = Regex("[0-9]{8}")
 
     public fun isAllAttributesNull() : Boolean {
         for (field in this.javaClass.declaredFields) {
@@ -21,11 +24,29 @@ data class SearchHabitModel(
         return true;
     }
 
-//    @AssertTrue(message = "updateがcreateより過去")
-//    fun isLater(): Boolean {
-////        if(create == null || update == null) return true
-////        return create.before(update) || create == update
-//        return true
-//    }
+    @AssertTrue(message = "createDateFromおよびcreateDateToの形式が不正です。")
+    fun isCreateDateFromBeforeTo(): Boolean {
+        // どちらかだけがnullの場合はFalse
+        if ((createDateFrom == null && createDateTo != null)
+                || (createDateFrom != null && createDateTo == null)) {
+            return false
+        }
+
+        if (createDateFrom != null && !regex.matches(createDateFrom)) {
+            return false
+        }
+
+        if (createDateTo != null && !regex.matches(createDateTo)) {
+            return false
+        }
+
+        if(createDateFrom != null && createDateTo != null) {
+            val from: LocalDateTime = DateTimeUtility.fromYYYYMMDD(createDateFrom)
+            val to: LocalDateTime = DateTimeUtility.fromYYYYMMDD(createDateTo)
+            return from.isBefore(to) || from.isEqual(to)
+        }
+
+        return true
+    }
 
 }
