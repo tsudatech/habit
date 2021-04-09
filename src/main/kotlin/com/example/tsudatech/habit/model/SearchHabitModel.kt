@@ -13,7 +13,7 @@ data class SearchHabitModel(
         val updateDateTo : String?
 ) {
 
-    val regex = Regex("[0-9]{8}")
+    private val regex = Regex("[0-9]{8}")
 
     public fun isAllAttributesNull() : Boolean {
         for (field in this.javaClass.declaredFields) {
@@ -24,29 +24,48 @@ data class SearchHabitModel(
         return true;
     }
 
-    @AssertTrue(message = "createDateFromおよびcreateDateToの形式が不正です。")
-    fun isCreateDateFromBeforeTo(): Boolean {
+    @AssertTrue(message = "{invalidCreateDate}")
+    private fun isCreateDateValid(): Boolean {
         // どちらかだけがnullの場合はFalse
         if ((createDateFrom == null && createDateTo != null)
                 || (createDateFrom != null && createDateTo == null)) {
             return false
         }
-
         if (createDateFrom != null && !regex.matches(createDateFrom)) {
             return false
         }
-
         if (createDateTo != null && !regex.matches(createDateTo)) {
             return false
         }
-
         if(createDateFrom != null && createDateTo != null) {
-            val from: LocalDateTime = DateTimeUtility.fromYYYYMMDD(createDateFrom)
-            val to: LocalDateTime = DateTimeUtility.fromYYYYMMDD(createDateTo)
-            return from.isBefore(to) || from.isEqual(to)
+            return this.isFromBeforeTo(createDateFrom, createDateTo)
         }
-
         return true
+    }
+
+    @AssertTrue(message = "{invalidUpdateDate}")
+    private fun isUpdateDateValid(): Boolean {
+        // どちらかだけがnullの場合はFalse
+        if ((updateDateFrom == null && updateDateTo != null)
+                || (updateDateFrom != null && updateDateTo == null)) {
+            return false
+        }
+        if (updateDateFrom != null && !regex.matches(updateDateFrom)) {
+            return false
+        }
+        if (updateDateTo != null && !regex.matches(updateDateTo)) {
+            return false
+        }
+        if(updateDateFrom != null && updateDateTo != null) {
+            return this.isFromBeforeTo(updateDateFrom, updateDateTo)
+        }
+        return true
+    }
+
+    private fun isFromBeforeTo(from:String, to:String) : Boolean {
+        val from: LocalDateTime = DateTimeUtility.fromYYYYMMDD(from)
+        val to: LocalDateTime = DateTimeUtility.fromYYYYMMDD(to)
+        return from.isBefore(to) || from.isEqual(to)
     }
 
 }
